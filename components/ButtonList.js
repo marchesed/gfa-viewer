@@ -1,16 +1,12 @@
 import { TouchableHighlight, Text, StyleSheet } from "react-native";
-
-const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
-function randNum () {
-    return Math.floor(Math.random() * 12345);
-}
+import { months, padHour, randNum } from "../utils/utils";
 
 export default function ButtonList({links, navigation}) {
     let now = new Date();
-    let thisHour = now.getHours();
     let UTCHour = now.getUTCHours();
-    let UTCDiff = UTCHour - thisHour;
+    let incrementDay = false;
+    let UTCDiff = now.getTimezoneOffset() / 60;
+
 
     const getFirstHour = () => {
         let firstHour;
@@ -32,7 +28,10 @@ export default function ButtonList({links, navigation}) {
     return links.map((link, i) => {
         let firstHour = getFirstHour();
         let hour = (i * 6) + firstHour;
-        let incrementDay = false;
+
+        if (hour === 0) {
+            incrementDay = true;
+        }
         if (hour === 24 && i !== 0) {
             hour = 0;
             incrementDay = true;
@@ -43,7 +42,7 @@ export default function ButtonList({links, navigation}) {
         }
         let date = incrementDay ? now.getDate() + 1 : now.getDate();
         let EstDiff = hour === 0 ? 24 - UTCDiff : hour - UTCDiff
-        let buttonText = `Valid on ${months[now.getMonth()]} ${date} at ${hour} UTC (${EstDiff + ":00"} EST)`;
+        let buttonText = `Valid on ${months[now.getMonth()]} ${date} at ${padHour(hour) + ":00"} UTC (${padHour(EstDiff) + ":00"} Local)`;
 
         return (
             <TouchableHighlight 
