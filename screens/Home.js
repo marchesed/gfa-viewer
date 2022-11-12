@@ -107,15 +107,6 @@ export default function Home({ navigation }) {
         }
     }
 
-    const removeStoredRegion = async () => {
-        try {
-          await AsyncStorage.removeItem('@user_region')
-        } catch(e) {
-          // remove error
-        }
-      
-        console.log('Done.')
-    }
     return (
         <SafeAreaView>
             <Text style={styles.header}>Welcome to GFA Viewer!</Text>
@@ -128,6 +119,9 @@ export default function Home({ navigation }) {
                     setValue={setValue}
                     setItems={setItems}
                     onChangeValue={setNewValue}
+                    labelStyle={{
+                        fontWeight: 'bold'
+                    }}
                 />
             </View>
             <Text style={styles.subheader}>Region: {label} ({value})</Text>
