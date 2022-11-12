@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { Text, StyleSheet, SafeAreaView, View} from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import ButtonList from "../components/ButtonList";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const numOfForecasts = 3;
-//https://flightplanning.navcanada.ca/Latest/gfa/anglais/produits/uprair/gfa/gfacn33/Latest-gfacn33_turbc_000.png
 
 const regions = [
     {
@@ -36,7 +36,7 @@ const regions = [
         label: 'Artic',
         value: 'gfacn37'
     }
-]
+];
 
 function format(value) {
 	if (value < 10) {
@@ -44,7 +44,7 @@ function format(value) {
 	} else {
 		return "0" + value;
 	}
-}
+};
 
 export default function Home({ navigation }) {
 
@@ -60,8 +60,20 @@ export default function Home({ navigation }) {
       makeLinks();
     }, [value])
 
+    useEffect(() => {
+        getStoredRegion();
+    }, []);
+
     const makeLinks = () => {
-        let foundRegion = items.find(item => item.value === value)
+        let foundRegion;
+        if (value) {
+            foundRegion = items.find(item => item.value === value);
+        }
+        else {
+            foundRegion = items[2];
+            setValue(foundRegion.value)
+        }
+
         setLabel(foundRegion.label)
         let weatherlLinks = [];
         let icingLinks = [];
@@ -73,8 +85,37 @@ export default function Home({ navigation }) {
         setWeatherLinks(weatherlLinks);
         setIcingLinks(icingLinks);
     }
-    
 
+    const setNewValue = async (value) => {
+        try {
+            console.log('setting new value',value)
+            AsyncStorage.setItem('@user_region', value)
+        } catch (error) {
+            console.error("Error setting new region value")
+        }
+    }
+
+    const getStoredRegion = async () => {
+        try {
+            const userRegion = await AsyncStorage.getItem("@user_region");
+            if (userRegion !== undefined) {
+                setValue(userRegion);
+            }
+        } catch (error) {
+            console.error("Error getting user region value");
+            return null;
+        }
+    }
+
+    const removeStoredRegion = async () => {
+        try {
+          await AsyncStorage.removeItem('@user_region')
+        } catch(e) {
+          // remove error
+        }
+      
+        console.log('Done.')
+    }
     return (
         <SafeAreaView>
             <Text style={styles.header}>Welcome to GFA Viewer!</Text>
@@ -86,6 +127,7 @@ export default function Home({ navigation }) {
                     setOpen={setOpen}
                     setValue={setValue}
                     setItems={setItems}
+                    onChangeValue={setNewValue}
                 />
             </View>
             <Text style={styles.subheader}>Region: {label} ({value})</Text>
