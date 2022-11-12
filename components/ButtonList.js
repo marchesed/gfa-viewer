@@ -1,7 +1,7 @@
 import { TouchableHighlight, Text, StyleSheet } from "react-native";
 import { months, padHour, randNum } from "../utils/utils";
 
-export default function ButtonList({links, navigation}) {
+export default function ButtonList({ links, navigation, region}) {
     let now = new Date();
     let UTCHour = now.getUTCHours();
     let incrementDay = false;
@@ -48,7 +48,7 @@ export default function ButtonList({links, navigation}) {
             <TouchableHighlight 
                 underlayColor={'aqua'} 
                 style={styles.btn} 
-                onPress={() => navigation.navigate('Map', { imageURL: link })}
+                onPress={() => navigation.navigate('Map', { imageURL: link, region: region, hour: hour })}
                 key={randNum()}
             >
                 <Text style={styles.btnText}>{buttonText}</Text>

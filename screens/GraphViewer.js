@@ -1,6 +1,5 @@
 import React from "react";
-import { View, Text, Dimensions, StyleSheet, Alert} from "react-native";
-import { StatusBar } from 'expo-status-bar';
+import { View, Dimensions, StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
@@ -9,13 +8,14 @@ const windowHeight = Dimensions.get('window').height;
 
 export default function GraphViewer({ route, navigation }) {
 
-    const { imageURL } = route.params;
+    const { imageURL, region, hour } = route.params;
+
+    navigation.setOptions({ title: region + ' valid on ' + hour + ' UTC'})
 
     const scale = useSharedValue(1);
     const savedScale = useSharedValue(1);
     const END_POSITION = 200;
     const onLeft = useSharedValue(true);
-    const onRight = useSharedValue(true);
     const xPosition = useSharedValue(0);
     const yPosition = useSharedValue(0);
 
@@ -84,10 +84,3 @@ export default function GraphViewer({ route, navigation }) {
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    image: {
-        width: windowWidth,
-        height: windowHeight - 100
-    }
-});

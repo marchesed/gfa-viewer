@@ -126,9 +126,9 @@ export default function Home({ navigation }) {
             </View>
             <Text style={styles.subheader}>Region: {label} ({value})</Text>
             <Text style={styles.copy}>Clouds & Weather Maps:</Text>
-            <ButtonList links={weatherLinks} navigation={navigation} />
+            <ButtonList links={weatherLinks} navigation={navigation} region={label} />
             <Text style={styles.copy}>Icing, Turbulence & Freezing Maps:</Text>
-            <ButtonList links={icingLinks} navigation={navigation} />
+            <ButtonList links={icingLinks} navigation={navigation} region={label} />
             <StatusBar style="dark" />
         </SafeAreaView>
     );
