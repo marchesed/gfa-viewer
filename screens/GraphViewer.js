@@ -16,7 +16,8 @@ export default function GraphViewer({ route, navigation }) {
     const END_POSITION = 200;
     const onLeft = useSharedValue(true);
     const onRight = useSharedValue(true);
-    const leftPosition = useSharedValue(0);
+    const xPosition = useSharedValue(0);
+    const yPosition = useSharedValue(0);
 
     const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
@@ -25,7 +26,7 @@ export default function GraphViewer({ route, navigation }) {
     .onEnd(() => {
         if (scale.value < 1) {
             scale.value = 1;
-            leftPosition.value = 0;
+            xPosition.value = 0;
         }
         savedScale.value = scale.value;
     });
@@ -37,7 +38,7 @@ export default function GraphViewer({ route, navigation }) {
         if (scale.value <= 1) {
             scale.value = savedScale.value * 2;
         } else {
-            leftPosition.value = 0;
+            xPosition.value = 0;
             scale.value = 1;
         }
         savedScale.value = scale.value;
@@ -47,15 +48,17 @@ export default function GraphViewer({ route, navigation }) {
     .onUpdate((e) => {
         if (scale.value !== 1) {
             if (onLeft.value) {
-                leftPosition.value = e.translationX;
+                xPosition.value = e.translationX;
+                yPosition.value = e.translationY;
             } else {
-                leftPosition.value = END_POSITION + e.translationX;
+                xPosition.value = END_POSITION + e.translationX;
+                yPosition.value = END_POSITION + e.translationY;
             }
         }
     })
     .onEnd((e) => {
-        if (leftPosition.value < -200 || leftPosition.value > 200) {
-            leftPosition.value = withTiming(0, { duration: 100 });
+        if (xPosition.value < -200 || xPosition.value > 200) {
+            xPosition.value = withTiming(0, { duration: 100 });
             onLeft.value = true;
         }
     });
@@ -63,7 +66,7 @@ export default function GraphViewer({ route, navigation }) {
     const composed = Gesture.Simultaneous(pinchGesture, panGesture, doubleTap);
 
     const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }, { translateX: leftPosition.value }],
+        transform: [{ scale: scale.value }, { translateX: xPosition.value }, { translateY: yPosition.value}],
       }));
 
     return(
