@@ -4,6 +4,7 @@ import { Text, StyleSheet, SafeAreaView, View} from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import ButtonList from "../components/ButtonList";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Clock from '../components/Clock';
 
 const numOfForecasts = 3;
 
@@ -125,6 +126,7 @@ export default function Home({ navigation }) {
                 />
             </View>
             <Text style={styles.subheader}>Region: {label} ({value})</Text>
+            <Clock />
             <Text style={styles.copy}>Clouds & Weather Maps:</Text>
             <ButtonList links={weatherLinks} navigation={navigation} region={label} />
             <Text style={styles.copy}>Icing, Turbulence & Freezing Maps:</Text>
