@@ -1,10 +1,7 @@
 import React from "react";
-import { View, Dimensions, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
-
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
 
 export default function GraphViewer({ route, navigation }) {
 
@@ -14,10 +11,11 @@ export default function GraphViewer({ route, navigation }) {
 
     const scale = useSharedValue(1);
     const savedScale = useSharedValue(1);
-    const END_POSITION = 200;
     const onLeft = useSharedValue(true);
     const xPosition = useSharedValue(0);
+    const savedXPosition = useSharedValue(0);
     const yPosition = useSharedValue(0);
+    const savedYPosition = useSharedValue(0);
 
     const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
@@ -39,6 +37,9 @@ export default function GraphViewer({ route, navigation }) {
             scale.value = savedScale.value * 2;
         } else {
             xPosition.value = 0;
+            yPosition.value = 0;
+            savedXPosition.value = 0;
+            savedYPosition.value = 0;
             scale.value = 1;
         }
         savedScale.value = scale.value;
@@ -47,20 +48,16 @@ export default function GraphViewer({ route, navigation }) {
     const panGesture = Gesture.Pan()
     .onUpdate((e) => {
         if (scale.value !== 1) {
-            if (onLeft.value) {
-                xPosition.value = e.translationX;
-                yPosition.value = e.translationY;
-            } else {
-                xPosition.value = END_POSITION + e.translationX;
-                yPosition.value = END_POSITION + e.translationY;
-            }
+            xPosition.value = savedXPosition.value + e.translationX;
+            yPosition.value = savedYPosition.value + e.translationY;
         }
     })
     .onEnd((e) => {
         if (xPosition.value < -200 || xPosition.value > 200) {
             xPosition.value = withTiming(0, { duration: 100 });
-            onLeft.value = true;
         }
+        savedXPosition.value = xPosition.value;
+        savedYPosition.value = yPosition.value;
     });
 
     const composed = Gesture.Simultaneous(pinchGesture, panGesture, doubleTap);
