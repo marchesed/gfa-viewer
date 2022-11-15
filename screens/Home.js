@@ -110,7 +110,7 @@ export default function Home({ navigation }) {
 
     return (
         <SafeAreaView>
-            <Text style={styles.header}>Welcome to GFA Viewer!</Text>
+            <Text style={styles.header}>Canadian GFA Viewer</Text>
             <View style={styles.dropdownContainer}>
                 <DropDownPicker
                     open={open}

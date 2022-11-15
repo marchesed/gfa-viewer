@@ -40,9 +40,13 @@ export default function ButtonList({ links, navigation, region}) {
             hour = 6;
             incrementDay = true;
         }
-        let date = incrementDay ? now.getDate() + 1 : now.getDate();
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        console.log(tomorrow)
+        let date = incrementDay ? tomorrow.getDate() : now.getDate();
+        let month = incrementDay ? tomorrow.getMonth() : tomorrow.getDate();
         let EstDiff = hour === 0 ? 24 - UTCDiff : hour - UTCDiff
-        let buttonText = `Valid on ${months[now.getMonth()]} ${date} at ${padHour(hour) + ":00"} UTC (${padHour(EstDiff) + ":00"} Local)`;
+        let buttonText = `Valid on ${months[month]} ${date} at ${padHour(hour) + ":00"} UTC (${padHour(EstDiff) + ":00"} Local)`;
 
         return (
             <TouchableHighlight 
