@@ -13,8 +13,8 @@ export default function Clock () {
 
     return (
         <View style={styles.timeContainer}>
-            <Text>Current Zulu time: {padHour(date.getUTCHours())}:{date.getUTCMinutes()}</Text> 
-            <Text>Current Local time: {padHour(date.getHours())}:{date.getMinutes()}</Text>
+            <Text>Current Zulu time: {padHour(date.getUTCHours())}:{padHour(date.getUTCMinutes())}</Text> 
+            <Text>Current Local time: {padHour(date.getHours())}:{padHour(date.getMinutes())}</Text>
         </View>
     )
 }
