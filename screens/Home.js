@@ -130,7 +130,7 @@ export default function Home({ navigation }) {
             <ButtonList links={weatherLinks} navigation={navigation} region={label} />
             <Text style={styles.copy}>Icing, Turbulence & Freezing Maps:</Text>
             <ButtonList links={icingLinks} navigation={navigation} region={label} />
-            <StatusBar style="dark" />
+            <StatusBar barStyle={'dark-content'} />
         </SafeAreaView>
     );
 }
