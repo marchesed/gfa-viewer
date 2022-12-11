@@ -2,7 +2,7 @@
   "expo": {
     "name": "Canadian GFA Viewer",
     "slug": "gfa-viewer",
-    "version": "1.0.0",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -24,10 +24,18 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.dmarchese.gfaviewer",
+      "permissions": [],
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "49a0f5e3-80e4-425d-9b04-1843a6ac9667"
+      }
     }
   }
 }
