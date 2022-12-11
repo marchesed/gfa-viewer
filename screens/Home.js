@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from "react";
-import { Text, StyleSheet, SafeAreaView, View} from "react-native";
+import { Text, StyleSheet, SafeAreaView, View, Platform, StatusBar} from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import ButtonList from "../components/ButtonList";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -137,6 +136,11 @@ export default function Home({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+    AndroidSafeArea: {
+        flex: 1,
+        backgroundColor: "white",
+        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
+    },
     header: {
         fontSize: 22,
         padding: 10,
