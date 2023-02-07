@@ -2,7 +2,7 @@
   "expo": {
     "name": "Canadian GFA Viewer",
     "slug": "gfa-viewer",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -27,7 +27,7 @@
       },
       "package": "com.dmarchese.gfaviewer",
       "permissions": [],
-      "versionCode": 2
+      "versionCode": 3
     },
     "web": {
       "favicon": "./assets/favicon.png"
