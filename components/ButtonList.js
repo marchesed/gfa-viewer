@@ -63,7 +63,7 @@ export default function ButtonList({ links, navigation, region}) {
 const styles = StyleSheet.create({
     btn: {
         paddingHorizontal: 10,
-        paddingVertical: 15,
+        paddingVertical: 20,
         margin: 10,
         backgroundColor: 'aquamarine',
         alignContent: 'center',

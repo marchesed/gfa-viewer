@@ -1,7 +1,8 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import Hint from "../components/Hint";
 
 export default function GraphViewer({ route, navigation }) {
 
@@ -68,6 +69,7 @@ export default function GraphViewer({ route, navigation }) {
 
     return(
         <View>
+            <Hint />
             <GestureDetector gesture={composed}>
                 <Animated.Image
                     source={{ uri: imageURL }}
