@@ -21,10 +21,11 @@ export default function GraphViewer({ route, navigation }) {
     .onUpdate((e) => {
         scale.value = savedScale.value * e.scale;
     })
-    .onEnd(() => {
-        if (scale.value < 1) {
+    .onEnd((e) => {
+        if (e.scale < 1) {
             scale.value = 1;
             xPosition.value = 0;
+            yPosition.value = 0;
         }
         savedScale.value = scale.value;
     });
