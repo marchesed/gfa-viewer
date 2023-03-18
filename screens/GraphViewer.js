@@ -1,5 +1,5 @@
-import React from "react";
-import { View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Pressable, View, Text, StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
@@ -7,7 +7,11 @@ export default function GraphViewer({ route, navigation }) {
 
     const { imageURL, region, hour } = route.params;
 
-    navigation.setOptions({ title: region + ' valid on ' + hour + ' UTC'})
+    // const [somethingChanged, setSomethingChanged] = useState(false)
+    
+    useEffect(() => {
+        navigation.setOptions({ title: region + ' valid on ' + hour + ' UTC'})
+    }, []);
 
     const scale = useSharedValue(1);
     const savedScale = useSharedValue(1);
@@ -16,6 +20,8 @@ export default function GraphViewer({ route, navigation }) {
     const savedXPosition = useSharedValue(0);
     const yPosition = useSharedValue(0);
     const savedYPosition = useSharedValue(0);
+    const rotation = useSharedValue(0);
+    const savedRotation = useSharedValue(0);
 
     const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
@@ -28,6 +34,7 @@ export default function GraphViewer({ route, navigation }) {
             yPosition.value = 0;
         }
         savedScale.value = scale.value;
+        // setSomethingChanged(true);
     });
 
     const doubleTap = Gesture.Tap()
@@ -43,6 +50,7 @@ export default function GraphViewer({ route, navigation }) {
             savedYPosition.value = 0;
             scale.value = 1;
         }
+        // setSomethingChanged(true);
         savedScale.value = scale.value;
     });
 
@@ -59,16 +67,39 @@ export default function GraphViewer({ route, navigation }) {
         }
         savedXPosition.value = xPosition.value;
         savedYPosition.value = yPosition.value;
+        // setSomethingChanged(true);
     });
 
-    const composed = Gesture.Simultaneous(pinchGesture, panGesture, doubleTap);
+    const rotate = Gesture.Rotation()
+    .onUpdate((e) => {
+        rotation.value = savedRotation.value + e.rotation;
+    })
+    .onEnd(() => {
+        savedRotation.value = rotation.value;
+        // setSomethingChanged(true);
+    });
+
+    const composed = Gesture.Simultaneous(pinchGesture, panGesture, doubleTap, rotate);
 
     const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }, { translateX: xPosition.value }, { translateY: yPosition.value}],
-      }));
+        transform: [
+            { scale: scale.value }, 
+            { translateX: xPosition.value }, 
+            { translateY: yPosition.value},
+            { rotateZ: `${(rotation.value / Math.PI) * 180}deg` }
+        ],
+    }));
 
-    return(
+    const resetImage = () => {
+        // setSomethingChanged(false);
+        console.log('reset')
+    }
+
+    return (
         <View>
+            {/* <Pressable style={styles.resetButton} onPress={() => resetImage()}>
+                    <Text>Reset Image</Text>
+                </Pressable> */}
             <GestureDetector gesture={composed}>
                 <Animated.Image
                     source={{ uri: imageURL }}
@@ -82,3 +113,15 @@ export default function GraphViewer({ route, navigation }) {
         </View>
     )
 }
+const styles = StyleSheet.create({
+    resetButton: {
+        margin: 20,
+        padding: 10,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 999,
+        backgroundColor: 'grey',
+        borderRadius: 4
+    }
+});
