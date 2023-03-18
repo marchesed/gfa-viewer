@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Pressable, View, Text, StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import Hint from "../components/Hint";
 
 export default function GraphViewer({ route, navigation }) {
 
@@ -100,6 +101,7 @@ export default function GraphViewer({ route, navigation }) {
             {/* <Pressable style={styles.resetButton} onPress={() => resetImage()}>
                     <Text>Reset Image</Text>
                 </Pressable> */}
+            <Hint />
             <GestureDetector gesture={composed}>
                 <Animated.Image
                     source={{ uri: imageURL }}
