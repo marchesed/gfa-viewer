@@ -6,6 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clock from '../components/Clock';
 
 const numOfForecasts = 3;
+const userRegionKey = "@user_region";
+const dismissHintKey = "@dismissed_hint";
 
 const regions = [
     {
@@ -51,7 +53,8 @@ export default function Home({ navigation }) {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState('gfacn33');
     const [label, setLabel] = useState('Ontario & Quebec');
-    const [items, setItems] = useState(regions)
+    const [items, setItems] = useState(regions);
+    const [hintDismissed, setHintDismissed] = useState(false);
 
     const [weatherLinks, setWeatherLinks] = useState([]);
     const [icingLinks, setIcingLinks] = useState([]);
@@ -61,7 +64,7 @@ export default function Home({ navigation }) {
     }, [value])
 
     useEffect(() => {
-        getStoredRegion();
+        getLocalStorageValue(userRegionKey, setValue);
     }, []);
 
     const makeLinks = () => {
@@ -78,7 +81,7 @@ export default function Home({ navigation }) {
         let weatherlLinks = [];
         let icingLinks = [];
         for(let i = 0; i < numOfForecasts; i++) {
-            let num = format(i*6);
+            let num = format(i * 6);
             weatherlLinks.push(`https://flightplanning.navcanada.ca/Latest/gfa/anglais/produits/uprair/gfa/${value}/Latest-${value}_cldwx_${num}.png`);
             icingLinks.push(`https://flightplanning.navcanada.ca/Latest/gfa/anglais/produits/uprair/gfa/${value}/Latest-${value}_turbc_${num}.png`);
         }
@@ -86,23 +89,23 @@ export default function Home({ navigation }) {
         setIcingLinks(icingLinks);
     }
 
-    const setNewValue = async (value) => {
+    const setLocalStorageValue = async (key, value) => {
         try {
             console.log('setting new value',value)
-            AsyncStorage.setItem('@user_region', value)
+            await AsyncStorage.setItem(key, value)
         } catch (error) {
-            console.error("Error setting new region value")
+            console.error(`Error setting ${key}`)
         }
     }
 
-    const getStoredRegion = async () => {
+    const getLocalStorageValue = async (key, setter) => {
         try {
-            const userRegion = await AsyncStorage.getItem("@user_region");
-            if (userRegion !== undefined) {
-                setValue(userRegion);
+            const localValue = await AsyncStorage.getItem(key);
+            if (localValue !== undefined) {
+                setter(localValue);
             }
         } catch (error) {
-            console.error("Error getting user region value");
+            console.error(`Error getting ${key}`);
             return null;
         }
     }
@@ -118,7 +121,7 @@ export default function Home({ navigation }) {
                     setOpen={setOpen}
                     setValue={setValue}
                     setItems={setItems}
-                    onChangeValue={setNewValue}
+                    onChangeValue={(value) => setLocalStorageValue(userRegionKey, value)}
                     labelStyle={{
                         fontWeight: 'bold'
                     }}
