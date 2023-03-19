@@ -101,7 +101,7 @@ export default function GraphViewer({ route, navigation }) {
             {/* <Pressable style={styles.resetButton} onPress={() => resetImage()}>
                     <Text>Reset Image</Text>
                 </Pressable> */}
-            <Hint />
+            {/* <Hint /> */}
             <GestureDetector gesture={composed}>
                 <Animated.Image
                     source={{ uri: imageURL }}
