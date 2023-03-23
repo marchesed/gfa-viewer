@@ -1,7 +1,7 @@
 import { TouchableHighlight, Text, StyleSheet } from "react-native";
-import { months, padHour, randNum } from "../utils/utils";
+import { months, padHour, randomNumber } from "../utils/utils";
 
-export default function ButtonList({ links, navigation, region}) {
+export default function ButtonList({ links, navigation, region, hintDismissed }) {
     let now = new Date();
     let UTCHour = now.getUTCHours();
     let incrementDay = false;
@@ -47,12 +47,19 @@ export default function ButtonList({ links, navigation, region}) {
         let EstDiff = hour === 0 ? 24 - UTCDiff : hour - UTCDiff
         let buttonText = `Valid on ${months[month]} ${date} at ${padHour(hour) + ":00"} UTC (${padHour(EstDiff) + ":00"} Local)`;
 
+        const navigationProps = {
+            imageURL: link,
+            region: region,
+            hour: hour,
+            hintDismissed: hintDismissed
+        };
+
         return (
             <TouchableHighlight 
                 underlayColor={'aqua'} 
                 style={styles.btn} 
-                onPress={() => navigation.navigate('Map', { imageURL: link, region: region, hour: hour })}
-                key={randNum()}
+                onPress={() => navigation.navigate('Map', navigationProps)}
+                key={randomNumber()}
             >
                 <Text style={styles.btnText}>{buttonText}</Text>
             </TouchableHighlight>

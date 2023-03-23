@@ -1,24 +1,19 @@
-import { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { padHour } from "../utils/utils";
 import { Dimensions } from 'react-native';
 import { TouchableHighlight } from "react-native-gesture-handler";
 
 const windowWidth = Dimensions.get('window').width;
 
-export default function Hint () {
-
-    // const [date, setDate] = useState(new Date())
-
-    useEffect(() => {
-        // setInterval(() => setDate(new Date()), 10000);
-    }, []);
+export default function Hint ({ hintDismissed, dismissHint }) {
 
     return (
-        <View style={styles.hintContainer}>
-            <Text style={styles.hintText}>Hint: You can pinch or double tap to zoom in on the graph</Text>
-            <TouchableHighlight>
-                <Text style={styles.hintText}>X</Text>
+        <View style={[styles.hintContainer, hintDismissed ? styles.hintDismissed : '']}>
+            <Text style={[styles.hintText, styles.flex7]}>Hint: You can pinch or double tap to zoom in on the graph. You can also rotate the graph using 2 fingers</Text>
+            <TouchableHighlight 
+                style={styles.hintCloseCircle} 
+                underlayColor={'grey'}
+                onPress={() => dismissHint()}>
+                <Text style={styles.hintCloseX}>x</Text>
             </TouchableHighlight>
         </View>
     )
@@ -27,16 +22,39 @@ export default function Hint () {
 const styles = StyleSheet.create({
     hintContainer: {
         display: 'flex',
-        alignContent: 'space-between',
+        flex: 10,
+        flexDirection: 'row',
         position: 'absolute',
         padding: 10,
         margin: 10,
-        backgroundColor: 'black',
+        backgroundColor: '#757471',
         borderRadius: 4,
-        width: windowWidth - 20
+        width: windowWidth - 20,
+        zIndex: 420
     },
     hintText: {
         color: 'white',
+        fontWeight: 'bold',
+    },
+    hintCloseX: {
+        color: 'black',
+        fontSize: 16,
         fontWeight: 'bold'
+    },
+    hintCloseCircle: {
+        display: 'flex',
+        backgroundColor: 'white',
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        marginLeft: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    flex7: {
+        flex: 7,
+    },
+    hintDismissed: {
+        display: 'none'
     }
 })

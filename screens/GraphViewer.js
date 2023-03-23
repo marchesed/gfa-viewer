@@ -3,12 +3,15 @@ import { Pressable, View, Text, StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import Hint from "../components/Hint";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const dismissHintKey = "@dismissed_hint";
 
 export default function GraphViewer({ route, navigation }) {
 
-    const { imageURL, region, hour } = route.params;
+    const { imageURL, region, hour, hintDismissed } = route.params;
 
-    // const [somethingChanged, setSomethingChanged] = useState(false)
+    const [dismissHintClicked, setDismissHintClicked] = useState(false)
     
     useEffect(() => {
         navigation.setOptions({ title: region + ' valid on ' + hour + ' UTC'})
@@ -16,7 +19,6 @@ export default function GraphViewer({ route, navigation }) {
 
     const scale = useSharedValue(1);
     const savedScale = useSharedValue(1);
-    const onLeft = useSharedValue(true);
     const xPosition = useSharedValue(0);
     const savedXPosition = useSharedValue(0);
     const yPosition = useSharedValue(0);
@@ -91,17 +93,19 @@ export default function GraphViewer({ route, navigation }) {
         ],
     }));
 
-    const resetImage = () => {
-        // setSomethingChanged(false);
-        console.log('reset')
+
+    const dismissHint = async() => {
+        setDismissHintClicked(true);
+        try {
+            await AsyncStorage.setItem(dismissHintKey, JSON.stringify(true))
+        } catch (error) {
+            console.error(`Error setting ${dismissHintKey}`)
+        }
     }
 
     return (
         <View>
-            {/* <Pressable style={styles.resetButton} onPress={() => resetImage()}>
-                    <Text>Reset Image</Text>
-                </Pressable> */}
-            {/* <Hint /> */}
+            <Hint hintDismissed={hintDismissed || dismissHintClicked} dismissHint={dismissHint} />
             <GestureDetector gesture={composed}>
                 <Animated.Image
                     source={{ uri: imageURL }}
