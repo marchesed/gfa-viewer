@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
-import { Text, StyleSheet, SafeAreaView, View, Platform, StatusBar} from "react-native";
+import { useEffect, useState, useCallback } from "react";
+import { Text, StyleSheet, SafeAreaView, View, Platform, StatusBar, TouchableHighlight } from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import ButtonList from "../components/ButtonList";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clock from '../components/Clock';
+import { useFocusEffect } from '@react-navigation/native';
 
 const numOfForecasts = 3;
 const userRegionKey = "@user_region";
@@ -64,8 +65,16 @@ export default function Home({ navigation }) {
     }, [value])
 
     useEffect(() => {
+        console.log('getting from local')
         getLocalStorageValue(userRegionKey, setValue);
+        getLocalStorageValue(dismissHintKey, setHintDismissed);
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+          getLocalStorageValue(dismissHintKey, setHintDismissed);
+        }, [])
+    );
 
     const makeLinks = () => {
         let foundRegion;
@@ -101,12 +110,22 @@ export default function Home({ navigation }) {
     const getLocalStorageValue = async (key, setter) => {
         try {
             const localValue = await AsyncStorage.getItem(key);
-            if (localValue !== undefined) {
+            console.log('get value', localValue,key)
+            if (localValue) {
+                console.log('in if',key)
                 setter(localValue);
             }
         } catch (error) {
             console.error(`Error getting ${key}`);
             return null;
+        }
+    }
+
+    const clearLocalStorage = async () => {
+        try {
+            await AsyncStorage.removeItem(dismissHintKey)
+        } catch (error) {
+            console.error(`Error setting ${dismissHintKey}`)
         }
     }
 
@@ -130,9 +149,20 @@ export default function Home({ navigation }) {
             <Text style={styles.subheader}>Region: {label} ({value})</Text>
             <Clock />
             <Text style={styles.copy}>Clouds & Weather Maps:</Text>
-            <ButtonList links={weatherLinks} navigation={navigation} region={label} />
+            <ButtonList 
+                links={weatherLinks} 
+                navigation={navigation} 
+                region={label} 
+                hintDismissed={hintDismissed} />
             <Text style={styles.copy}>Icing, Turbulence & Freezing Maps:</Text>
-            <ButtonList links={icingLinks} navigation={navigation} region={label} />
+            <ButtonList 
+                links={icingLinks} 
+                navigation={navigation} 
+                region={label} 
+                hintDismissed={hintDismissed} />
+            <TouchableHighlight onPress={() => clearLocalStorage()}>
+                <Text>clear hint dismissed</Text>
+            </TouchableHighlight>
             <StatusBar barStyle={'dark-content'} />
         </SafeAreaView>
     );
