@@ -4,10 +4,19 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './screens/Home';
 import GraphViewer from './screens/GraphViewer';
+import { createClient } from '@segment/analytics-react-native';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+  if (process.env.NODE_ENV !== 'development') {
+    createClient({
+      writeKey: "UETRD4HvZWAI8EtKS8UQJS4hYH9g9GEd",
+      trackAppLifecycleEvents: true,
+    });
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -17,12 +26,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
