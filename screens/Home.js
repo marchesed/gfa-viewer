@@ -65,7 +65,6 @@ export default function Home({ navigation }) {
     }, [value])
 
     useEffect(() => {
-        console.log('getting from local')
         getLocalStorageValue(userRegionKey, setValue);
         getLocalStorageValue(dismissHintKey, setHintDismissed);
     }, []);
@@ -100,7 +99,6 @@ export default function Home({ navigation }) {
 
     const setLocalStorageValue = async (key, value) => {
         try {
-            console.log('setting new value',value)
             await AsyncStorage.setItem(key, value)
         } catch (error) {
             console.error(`Error setting ${key}`)
@@ -110,22 +108,12 @@ export default function Home({ navigation }) {
     const getLocalStorageValue = async (key, setter) => {
         try {
             const localValue = await AsyncStorage.getItem(key);
-            console.log('get value', localValue,key)
             if (localValue) {
-                console.log('in if',key)
                 setter(localValue);
             }
         } catch (error) {
             console.error(`Error getting ${key}`);
             return null;
-        }
-    }
-
-    const clearLocalStorage = async () => {
-        try {
-            await AsyncStorage.removeItem(dismissHintKey)
-        } catch (error) {
-            console.error(`Error setting ${dismissHintKey}`)
         }
     }
 
@@ -160,9 +148,6 @@ export default function Home({ navigation }) {
                 navigation={navigation} 
                 region={label} 
                 hintDismissed={hintDismissed} />
-            <TouchableHighlight onPress={() => clearLocalStorage()}>
-                <Text>clear hint dismissed</Text>
-            </TouchableHighlight>
             <StatusBar barStyle={'dark-content'} />
         </SafeAreaView>
     );
