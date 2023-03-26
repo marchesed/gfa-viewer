@@ -8,7 +8,7 @@ export default function Hint ({ hintDismissed, dismissHint }) {
 
     return (
         <View style={[styles.hintContainer, hintDismissed ? styles.hintDismissed : '']}>
-            <Text style={[styles.hintText, styles.flex7]}>Hint: You can pinch or double tap to zoom in on the graph. You can also rotate the graph using 2 fingers</Text>
+            <Text style={[styles.hintText, styles.flex7]}>Hint: You can pinch to zoom in/out on the graph. You can also rotate the graph using 2 fingers.</Text>
             <TouchableHighlight 
                 style={styles.hintCloseCircle} 
                 underlayColor={'grey'}
