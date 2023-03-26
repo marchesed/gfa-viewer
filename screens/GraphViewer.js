@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Pressable, View, Text, StyleSheet } from "react-native";
+import React, { useEffect, useState, useMemo } from "react";
+import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
 import Hint from "../components/Hint";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -11,10 +11,11 @@ export default function GraphViewer({ route, navigation }) {
 
     const { imageURL, region, hour, hintDismissed } = route.params;
 
-    const [dismissHintClicked, setDismissHintClicked] = useState(false)
+    const [dismissHintClicked, setDismissHintClicked] = useState(false);
+    const [gestureDetected, setGestureDetected] = useState(false);
     
     useEffect(() => {
-        navigation.setOptions({ title: region + ' valid on ' + hour + ' UTC'})
+        navigation.setOptions({ title: region + ' valid on ' + hour + ' UTC'});
     }, []);
 
     const scale = useSharedValue(1);
@@ -36,8 +37,8 @@ export default function GraphViewer({ route, navigation }) {
             xPosition.value = 0;
             yPosition.value = 0;
         }
+        runOnJS(setGestureDetected)(true)
         savedScale.value = scale.value;
-        // setSomethingChanged(true);
     });
 
     const doubleTap = Gesture.Tap()
@@ -53,7 +54,6 @@ export default function GraphViewer({ route, navigation }) {
             savedYPosition.value = 0;
             scale.value = 1;
         }
-        // setSomethingChanged(true);
         savedScale.value = scale.value;
     });
 
@@ -70,7 +70,7 @@ export default function GraphViewer({ route, navigation }) {
         }
         savedXPosition.value = xPosition.value;
         savedYPosition.value = yPosition.value;
-        // setSomethingChanged(true);
+        runOnJS(setGestureDetected)(true)
     });
 
     const rotate = Gesture.Rotation()
@@ -79,20 +79,21 @@ export default function GraphViewer({ route, navigation }) {
     })
     .onEnd(() => {
         savedRotation.value = rotation.value;
-        // setSomethingChanged(true);
+        runOnJS(setGestureDetected)(true)
     });
 
-    const composed = Gesture.Simultaneous(pinchGesture, panGesture, doubleTap, rotate);
+    const composed = Gesture.Simultaneous(pinchGesture, panGesture, rotate);
 
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [
-            { scale: scale.value }, 
-            { translateX: xPosition.value }, 
-            { translateY: yPosition.value},
-            { rotateZ: `${(rotation.value / Math.PI) * 180}deg` }
-        ],
-    }));
-
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [
+                { scale: scale.value }, 
+                { translateX: xPosition.value }, 
+                { translateY: yPosition.value},
+                { rotateZ: `${(rotation.value / Math.PI) * 180}deg` }
+            ],
+        }
+    });
 
     const dismissHint = async() => {
         setDismissHintClicked(true);
@@ -103,8 +104,25 @@ export default function GraphViewer({ route, navigation }) {
         }
     }
 
+    const resetImage = async() => {
+        scale.value = 1;
+        savedScale.value = 1;
+        xPosition.value = 0;
+        savedXPosition.value = 0;
+        yPosition.value = 0;
+        savedYPosition.value = 0;
+        rotation.value = 0;
+        savedRotation.value = 0;
+        setGestureDetected(false);
+    }
+
     return (
         <View>
+            {gestureDetected &&
+                <TouchableHighlight onPress={() => resetImage()} style={styles.resetButton}>
+                    <Text style={styles.resetButtonText}>Reset Graph</Text>
+                </TouchableHighlight>
+            }
             <Hint hintDismissed={hintDismissed || dismissHintClicked} dismissHint={dismissHint} />
             <GestureDetector gesture={composed}>
                 <Animated.Image
@@ -125,9 +143,13 @@ const styles = StyleSheet.create({
         padding: 10,
         position: 'absolute',
         right: 0,
-        top: 0,
+        bottom: 20,
         zIndex: 999,
         backgroundColor: 'grey',
         borderRadius: 4
+    },
+    resetButtonText: {
+        color: 'white',
+        fontWeight: 'bold'
     }
 });

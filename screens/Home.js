@@ -97,6 +97,7 @@ export default function Home({ navigation }) {
         setIcingLinks(icingLinks);
     }
 
+    // Keeping in for dev purposes
     const setLocalStorageValue = async (key, value) => {
         try {
             await AsyncStorage.setItem(key, value)
@@ -115,6 +116,10 @@ export default function Home({ navigation }) {
             console.error(`Error getting ${key}`);
             return null;
         }
+    }
+
+    const clearLocalValue = async () => {
+        await AsyncStorage.removeItem(dismissHintKey)
     }
 
     return (

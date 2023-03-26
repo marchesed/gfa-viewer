@@ -5,6 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './screens/Home';
 import GraphViewer from './screens/GraphViewer';
 import { createClient } from '@segment/analytics-react-native';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['sovran']);
 
 const Stack = createNativeStackNavigator();
 
