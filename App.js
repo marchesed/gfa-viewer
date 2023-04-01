@@ -6,11 +6,18 @@ import Home from './screens/Home';
 import GraphViewer from './screens/GraphViewer';
 import { createClient } from '@segment/analytics-react-native';
 import { LogBox } from 'react-native';
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({ 
+  dsn: 'https://13c39a33c6f1459c91742be51513b473@o4504941124255744.ingest.sentry.io/4504941125500928',
+  enableNative: false
+});
+
 LogBox.ignoreLogs(['sovran']);
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+function App() {
 
   if (process.env.NODE_ENV !== 'development') {
     createClient({
@@ -28,3 +35,5 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+export default Sentry.wrap(App);
