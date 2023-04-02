@@ -37,7 +37,7 @@ export default function GraphViewer({ route, navigation }) {
             xPosition.value = 0;
             yPosition.value = 0;
         }
-        runOnJS(setGestureDetected)(true)
+        runOnJS(setGestureDetected)(true);
         savedScale.value = scale.value;
     });
 
@@ -70,7 +70,6 @@ export default function GraphViewer({ route, navigation }) {
         }
         savedXPosition.value = xPosition.value;
         savedYPosition.value = yPosition.value;
-        runOnJS(setGestureDetected)(true)
     });
 
     const rotate = Gesture.Rotation()
