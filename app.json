@@ -26,7 +26,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.dmarchese.gfaviewer",
-      "permissions": [],
+      "permissions": ["android.permission.ACCESS_NETWORK_STATE"],
       "versionCode": 4
     },
     "web": {

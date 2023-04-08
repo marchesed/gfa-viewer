@@ -1,12 +1,13 @@
 import { TouchableHighlight, Text, StyleSheet } from "react-native";
 import { months, padHour, randomNumber } from "../utils/utils";
+import { useAnalytics } from '@segment/analytics-react-native';
 
 export default function ButtonList({ links, navigation, region, hintDismissed }) {
     let now = new Date();
     let UTCHour = now.getUTCHours();
     let incrementDay = false;
     let UTCDiff = now.getTimezoneOffset() / 60;
-
+    const { track } = useAnalytics();
 
     const getFirstHour = () => {
         let firstHour;
@@ -23,6 +24,11 @@ export default function ButtonList({ links, navigation, region, hintDismissed })
             firstHour = 18
         }
         return firstHour;
+    }
+
+    const buttonClick = (navigationProps) => {
+        track(`Graph viewed ${navigationProps.region}`);
+        navigation.navigate('Map', navigationProps);
     }
     
     return links.map((link, i) => {
@@ -58,7 +64,7 @@ export default function ButtonList({ links, navigation, region, hintDismissed })
             <TouchableHighlight 
                 underlayColor={'aqua'} 
                 style={styles.btn} 
-                onPress={() => navigation.navigate('Map', navigationProps)}
+                onPress={() => buttonClick(navigationProps)}
                 key={randomNumber()}
             >
                 <Text style={styles.btnText}>{buttonText}</Text>
