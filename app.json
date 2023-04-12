@@ -18,7 +18,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dmarchese.gfaviewer"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +27,9 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.dmarchese.gfaviewer",
-      "permissions": ["android.permission.ACCESS_NETWORK_STATE"],
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE"
+      ],
       "versionCode": 5
     },
     "web": {
