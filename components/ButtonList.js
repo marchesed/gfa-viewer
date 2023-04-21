@@ -50,8 +50,9 @@ export default function ButtonList({ links, navigation, region, hintDismissed })
         tomorrow.setDate(tomorrow.getDate() + 1);
         let date = incrementDay ? tomorrow.getDate() : now.getDate();
         let month = incrementDay ? tomorrow.getMonth() : now.getMonth();
-        let EstDiff = hour === 0 ? 24 - UTCDiff : hour - UTCDiff
-        let buttonText = `Valid on ${months[month]} ${date} at ${padHour(hour) + ":00"} UTC (${padHour(EstDiff) + ":00"} Local)`;
+        let EstDiff = hour === 0 ? 24 - UTCDiff : hour - UTCDiff;
+        let EstDiffFixed = EstDiff < 0 ? 24 + EstDiff : EstDiff;
+        let buttonText = `Valid on ${months[month]} ${date} at ${padHour(hour) + ":00"} UTC (${padHour(EstDiffFixed) + ":00"} Local)`;
 
         const navigationProps = {
             imageURL: link,
