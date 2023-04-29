@@ -36,7 +36,7 @@ const regions = [
         value: 'gfacn36'
     },
     {
-        label: 'Artic',
+        label: 'Arctic',
         value: 'gfacn37'
     }
 ];
@@ -125,6 +125,9 @@ export default function Home({ navigation }) {
     return (
         <SafeAreaView>
             <Text style={styles.header}>Canadian GFA Viewer</Text>
+            {/* <TouchableHighlight onPress={() => clearLocalValue()}>
+                <Text>clear</Text>
+            </TouchableHighlight> */}
             <View style={styles.dropdownContainer}>
                 <DropDownPicker
                     open={open}
@@ -153,6 +156,7 @@ export default function Home({ navigation }) {
                 navigation={navigation} 
                 region={label} 
                 hintDismissed={hintDismissed} />
+            
             <StatusBar barStyle={'dark-content'} />
         </SafeAreaView>
     );

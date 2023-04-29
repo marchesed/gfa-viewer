@@ -20,7 +20,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dmarchese.gfaviewer"
+      "bundleIdentifier": "com.dmarchese.gfaviewer",
+      "buildNumber": "6"
     },
     "android": {
       "adaptiveIcon": {
