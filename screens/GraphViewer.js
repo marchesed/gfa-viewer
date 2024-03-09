@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
 import Hint from "../components/Hint";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+// import { GestureHandlerRootView } from 'react-native-gesture-handler';
 const dismissHintKey = "@dismissed_hint";
 
 export default function GraphViewer({ route, navigation }) {
@@ -116,24 +116,26 @@ export default function GraphViewer({ route, navigation }) {
     }
 
     return (
-        <View>
-            {gestureDetected &&
-                <TouchableHighlight onPress={() => resetImage()} style={styles.resetButton}>
-                    <Text style={styles.resetButtonText}>Reset Graph</Text>
-                </TouchableHighlight>
-            }
-            <Hint hintDismissed={hintDismissed || dismissHintClicked} dismissHint={dismissHint} />
-            <GestureDetector gesture={composed}>
-                <Animated.Image
-                    source={{ uri: imageURL }}
-                    style={[{
-                        width: '100%',
-                        height: '100%'
-                    }, animatedStyle]}
-                    resizeMode="contain"
-                />
-            </GestureDetector>
-        </View>
+        <GestureHandlerRootView>
+            <View>
+                {gestureDetected &&
+                    <TouchableHighlight onPress={() => resetImage()} style={styles.resetButton}>
+                        <Text style={styles.resetButtonText}>Reset Graph</Text>
+                    </TouchableHighlight>
+                }
+                <Hint hintDismissed={hintDismissed || dismissHintClicked} dismissHint={dismissHint} />
+                <GestureDetector gesture={composed}>
+                    <Animated.Image
+                        source={{ uri: imageURL }}
+                        style={[{
+                            width: '100%',
+                            height: '100%'
+                        }, animatedStyle]}
+                        resizeMode="contain"
+                    />
+                </GestureDetector>
+            </View>
+        </GestureHandlerRootView>
     )
 }
 const styles = StyleSheet.create({

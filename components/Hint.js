@@ -1,6 +1,5 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
 import { Dimensions } from 'react-native';
-import { TouchableHighlight } from "react-native-gesture-handler";
 
 const windowWidth = Dimensions.get('window').width;
 
