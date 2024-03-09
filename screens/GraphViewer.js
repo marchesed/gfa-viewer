@@ -4,7 +4,6 @@ import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-g
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
 import Hint from "../components/Hint";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { GestureHandlerRootView } from 'react-native-gesture-handler';
 const dismissHintKey = "@dismissed_hint";
 
 export default function GraphViewer({ route, navigation }) {
@@ -41,21 +40,21 @@ export default function GraphViewer({ route, navigation }) {
         savedScale.value = scale.value;
     });
 
-    const doubleTap = Gesture.Tap()
-    .numberOfTaps(2)
-    .maxDuration(250)
-    .onStart(() => {
-        if (scale.value <= 1) {
-            scale.value = savedScale.value * 2;
-        } else {
-            xPosition.value = 0;
-            yPosition.value = 0;
-            savedXPosition.value = 0;
-            savedYPosition.value = 0;
-            scale.value = 1;
-        }
-        savedScale.value = scale.value;
-    });
+    // const doubleTap = Gesture.Tap()
+    // .numberOfTaps(2)
+    // .maxDuration(250)
+    // .onStart(() => {
+    //     if (scale.value <= 1) {
+    //         scale.value = savedScale.value * 2;
+    //     } else {
+    //         xPosition.value = 0;
+    //         yPosition.value = 0;
+    //         savedXPosition.value = 0;
+    //         savedYPosition.value = 0;
+    //         scale.value = 1;
+    //     }
+    //     savedScale.value = scale.value;
+    // });
 
     const panGesture = Gesture.Pan()
     .onUpdate((e) => {

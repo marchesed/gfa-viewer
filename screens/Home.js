@@ -13,31 +13,38 @@ const dismissHintKey = "@dismissed_hint";
 const regions = [
     {
         label: 'Pacific',
-        value: 'gfacn31'
+        value: 'gfacn31',
+        airportCode: 'CYVR'
     },
     {
         label: 'Prairies',
-        value: 'gfacn32'
+        value: 'gfacn32',
+        airportCode: 'CYYC'
     },
     {
         label: 'Ontario & Quebec',
-        value: 'gfacn33'
+        value: 'gfacn33',
+        airportCode: 'CYTZ'
     },
     {
         label: 'Atlantic',
-        value: 'gfacn34'
+        value: 'gfacn34',
+        airportCode: 'CYYG'
     },
     {
         label: 'Yukon & NWT',
-        value: 'gfacn35'
+        value: 'gfacn35',
+        airportCode: 'CYXY'
     },
     {
         label: 'Nunavut',
-        value: 'gfacn36'
+        value: 'gfacn36',
+        airportCode: 'CYFB'
     },
     {
         label: 'Arctic',
-        value: 'gfacn37'
+        value: 'gfacn37',
+        airportCode: 'CYAB'
     }
 ];
 
@@ -60,9 +67,45 @@ export default function Home({ navigation }) {
     const [weatherLinks, setWeatherLinks] = useState([]);
     const [icingLinks, setIcingLinks] = useState([]);
 
+    const getWeatherImages = async (airportCode) => {
+        try {
+          const response = await fetch(`https://plan.navcanada.ca/weather/api/alpha/?site=${airportCode}&image=GFA/CLDWX&image=GFA/TURBC`);
+          const json = await response.json();
+          return json;
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
     useEffect(() => {
-      makeLinks();
-    }, [value])
+      async function fetchData() {
+        let foundRegion;
+        if (value) {
+            foundRegion = items.find(item => item.value === value);
+        }
+        else {
+            foundRegion = items[2];
+            setValue(foundRegion.value);
+        }
+        setLabel(foundRegion.label);
+        const weatherData = await getWeatherImages(foundRegion.airportCode);
+        let clouds = weatherData.data[0].text;
+        let allCloudFrames = JSON.parse(clouds).frame_lists[2].frames;
+        let icing = weatherData.data[1].text;
+        let allIcingFrames = JSON.parse(icing).frame_lists[2].frames;
+        let weatherLinks = [];
+        let icingLinks = [];
+        allCloudFrames.forEach(frame => {
+            weatherLinks.push(`https://plan.navcanada.ca/weather/images/${frame.images[0].id}.png`)
+        });
+        allIcingFrames.forEach(frame => {
+            icingLinks.push(`https://plan.navcanada.ca/weather/images/${frame.images[0].id}.png`)
+        });
+        setWeatherLinks(weatherLinks);
+        setIcingLinks(icingLinks)
+      }
+      fetchData();
+    }, [value]);
 
     useEffect(() => {
         getLocalStorageValue(userRegionKey, setValue);
@@ -74,28 +117,6 @@ export default function Home({ navigation }) {
           getLocalStorageValue(dismissHintKey, setHintDismissed);
         }, [])
     );
-
-    const makeLinks = () => {
-        let foundRegion;
-        if (value) {
-            foundRegion = items.find(item => item.value === value);
-        }
-        else {
-            foundRegion = items[2];
-            setValue(foundRegion.value)
-        }
-
-        setLabel(foundRegion.label)
-        let weatherlLinks = [];
-        let icingLinks = [];
-        for(let i = 0; i < numOfForecasts; i++) {
-            let num = format(i * 6);
-            weatherlLinks.push(`https://flightplanning.navcanada.ca/Latest/gfa/anglais/produits/uprair/gfa/${value}/Latest-${value}_cldwx_${num}.png`);
-            icingLinks.push(`https://flightplanning.navcanada.ca/Latest/gfa/anglais/produits/uprair/gfa/${value}/Latest-${value}_turbc_${num}.png`);
-        }
-        setWeatherLinks(weatherlLinks);
-        setIcingLinks(icingLinks);
-    }
 
     // Keeping in for dev purposes
     const setLocalStorageValue = async (key, value) => {
