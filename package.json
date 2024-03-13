@@ -4,8 +4,8 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
@@ -15,7 +15,7 @@
     "@segment/analytics-react-native": "^2.13.4",
     "@segment/sovran-react-native": "^1.0.1",
     "@sentry/react-native": "5.19.1",
-    "expo": "^50.0.0",
+    "expo": "^50.0.11",
     "expo-crypto": "~12.8.1",
     "expo-dev-client": "~3.3.9",
     "expo-status-bar": "~1.11.1",

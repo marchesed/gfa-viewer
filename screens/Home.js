@@ -5,6 +5,7 @@ import ButtonList from "../components/ButtonList";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clock from '../components/Clock';
 import { useFocusEffect } from '@react-navigation/native';
+import { ScrollView } from "react-native-gesture-handler";
 
 const numOfForecasts = 3;
 const userRegionKey = "@user_region";
@@ -166,18 +167,19 @@ export default function Home({ navigation }) {
             <Text style={styles.subheader}>Region: {label} ({value})</Text>
             <Clock />
             <Text style={styles.copy}>Clouds & Weather Maps:</Text>
-            <ButtonList 
-                links={weatherLinks} 
-                navigation={navigation} 
-                region={label} 
-                hintDismissed={hintDismissed} />
-            <Text style={styles.copy}>Icing, Turbulence & Freezing Maps:</Text>
-            <ButtonList 
-                links={icingLinks} 
-                navigation={navigation} 
-                region={label} 
-                hintDismissed={hintDismissed} />
-            
+            <ScrollView>
+                <ButtonList 
+                    links={weatherLinks} 
+                    navigation={navigation} 
+                    region={label} 
+                    hintDismissed={hintDismissed} />
+                <Text style={styles.copy}>Icing, Turbulence & Freezing Maps:</Text>
+                <ButtonList 
+                    links={icingLinks} 
+                    navigation={navigation} 
+                    region={label} 
+                    hintDismissed={hintDismissed} />
+            </ScrollView>
             <StatusBar barStyle={'dark-content'} />
         </SafeAreaView>
     );
