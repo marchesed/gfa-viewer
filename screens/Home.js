@@ -1,11 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
-import { Text, StyleSheet, SafeAreaView, View, Platform, StatusBar, TouchableHighlight } from "react-native";
+import { Text, StyleSheet, SafeAreaView, View, Platform, StatusBar, TouchableHighlight, ScrollView } from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import ButtonList from "../components/ButtonList";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clock from '../components/Clock';
 import { useFocusEffect } from '@react-navigation/native';
-import { ScrollView } from "react-native-gesture-handler";
 
 const numOfForecasts = 3;
 const userRegionKey = "@user_region";
@@ -173,7 +172,9 @@ export default function Home({ navigation }) {
                     navigation={navigation} 
                     region={label} 
                     hintDismissed={hintDismissed} />
-                <Text style={styles.copy}>Icing, Turbulence & Freezing Maps:</Text>
+            </ScrollView>
+            <Text style={styles.copy}>Icing, Turbulence & Freezing Maps:</Text>
+            <ScrollView>
                 <ButtonList 
                     links={icingLinks} 
                     navigation={navigation} 
