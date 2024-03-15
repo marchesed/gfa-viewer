@@ -2,7 +2,7 @@
   "expo": {
     "name": "Canadian GFA Viewer",
     "slug": "gfa-viewer",
-    "version": "1.2.5",
+    "version": "1.2.6",
     "orientation": "portrait",
     "jsEngine": "hermes",
     "icon": "./assets/icon.png",
@@ -22,7 +22,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.dmarchese.gfaviewer",
-      "buildNumber": "8"
+      "buildNumber": "9"
     },
     "android": {
       "adaptiveIcon": {
@@ -33,7 +33,7 @@
       "permissions": [
         "android.permission.ACCESS_NETWORK_STATE"
       ],
-      "versionCode": 8
+      "versionCode": 9
     },
     "web": {
       "favicon": "./assets/favicon.png"
