@@ -5,7 +5,7 @@ import ButtonList from "../components/ButtonList";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clock from '../components/Clock';
 import { useFocusEffect } from '@react-navigation/native';
-
+import { useAnalytics } from '@segment/analytics-react-native';
 const numOfForecasts = 3;
 const userRegionKey = "@user_region";
 const dismissHintKey = "@dismissed_hint";
@@ -57,12 +57,15 @@ function format(value) {
 };
 
 export default function Home({ navigation }) {
+    const { track } = useAnalytics();
 
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState('gfacn33');
     const [label, setLabel] = useState('Ontario & Quebec');
     const [items, setItems] = useState(regions);
+    const [selectedRegion, setSelectedRegion] = useState(items[2]);
     const [hintDismissed, setHintDismissed] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const [weatherLinks, setWeatherLinks] = useState([]);
     const [icingLinks, setIcingLinks] = useState([]);
@@ -79,6 +82,7 @@ export default function Home({ navigation }) {
 
     useEffect(() => {
       async function fetchData() {
+        if (!loading) setLoading(true);
         let foundRegion;
         if (value) {
             foundRegion = items.find(item => item.value === value);
@@ -88,6 +92,7 @@ export default function Home({ navigation }) {
             setValue(foundRegion.value);
         }
         setLabel(foundRegion.label);
+        setSelectedRegion(foundRegion);
         const weatherData = await getWeatherImages(foundRegion.airportCode);
         let clouds = weatherData.data[0].text;
         let allCloudFrames = JSON.parse(clouds).frame_lists[2].frames;
@@ -102,7 +107,8 @@ export default function Home({ navigation }) {
             icingLinks.push(`https://plan.navcanada.ca/weather/images/${frame.images[0].id}.png`)
         });
         setWeatherLinks(weatherLinks);
-        setIcingLinks(icingLinks)
+        setIcingLinks(icingLinks);
+        setLoading(false);
       }
       fetchData();
     }, [value]);
@@ -143,6 +149,27 @@ export default function Home({ navigation }) {
         await AsyncStorage.removeItem(dismissHintKey)
     }
 
+    const refreshLinks = async() => {
+        setLoading(true);
+        track('Refresh Links Pressed');
+        const weatherData = await getWeatherImages(selectedRegion.airportCode);
+        let clouds = weatherData.data[0].text;
+        let allCloudFrames = JSON.parse(clouds).frame_lists[2].frames;
+        let icing = weatherData.data[1].text;
+        let allIcingFrames = JSON.parse(icing).frame_lists[2].frames;
+        let weatherLinks = [];
+        let icingLinks = [];
+        allCloudFrames.forEach(frame => {
+            weatherLinks.push(`https://plan.navcanada.ca/weather/images/${frame.images[0].id}.png`)
+        });
+        allIcingFrames.forEach(frame => {
+            icingLinks.push(`https://plan.navcanada.ca/weather/images/${frame.images[0].id}.png`)
+        });
+        setWeatherLinks(weatherLinks);
+        setIcingLinks(icingLinks);
+        setLoading(false);
+    }
+
     return (
         <SafeAreaView>
             <Text style={styles.header}>Canadian GFA Viewer</Text>
@@ -165,22 +192,32 @@ export default function Home({ navigation }) {
             </View>
             <Text style={styles.subheader}>Region: {label} ({value})</Text>
             <Clock />
-            <Text style={styles.copy}>Clouds & Weather Maps:</Text>
-            <ScrollView>
-                <ButtonList 
-                    links={weatherLinks} 
-                    navigation={navigation} 
-                    region={label} 
-                    hintDismissed={hintDismissed} />
-            </ScrollView>
-            <Text style={styles.copy}>Icing, Turbulence & Freezing Maps:</Text>
-            <ScrollView>
-                <ButtonList 
-                    links={icingLinks} 
-                    navigation={navigation} 
-                    region={label} 
-                    hintDismissed={hintDismissed} />
-            </ScrollView>
+            {loading &&
+                <Text style={styles.copy}>Loading map links...</Text>
+            }
+            {!loading &&
+                <View>
+                    <TouchableHighlight style={styles.btn} onPress={() => refreshLinks()} underlayColor={'#edae00'}>
+                        <Text style={styles.btnText}>Refresh Links</Text>
+                    </TouchableHighlight>
+                    <Text style={styles.copy}>Clouds & Weather Maps:</Text>
+                    <ScrollView>
+                        <ButtonList 
+                            links={weatherLinks} 
+                            navigation={navigation} 
+                            region={label} 
+                            hintDismissed={hintDismissed} />
+                    </ScrollView>
+                    <Text style={styles.copy}>Icing, Turbulence & Freezing Maps:</Text>
+                    <ScrollView>
+                        <ButtonList 
+                            links={icingLinks} 
+                            navigation={navigation} 
+                            region={label} 
+                            hintDismissed={hintDismissed} />
+                    </ScrollView>
+                </View>
+            }
             <StatusBar barStyle={'dark-content'} />
         </SafeAreaView>
     );
@@ -210,5 +247,18 @@ const styles = StyleSheet.create({
     dropdownContainer: {
         margin: 10,
         zIndex: 999
+    },
+    btn: {
+        backgroundColor: 'yellow',
+        padding: 10,
+        tex: 'white',
+        width: 150,
+        alignItems: 'center',
+        marginLeft: 10,
+        borderRadius: 5
+    },
+    btnText: {
+        fontWeight: 'bold'
     }
+    
 });
