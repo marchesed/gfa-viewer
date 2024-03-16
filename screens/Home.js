@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clock from '../components/Clock';
 import { useFocusEffect } from '@react-navigation/native';
 import { useAnalytics } from '@segment/analytics-react-native';
-const numOfForecasts = 3;
+
 const userRegionKey = "@user_region";
 const dismissHintKey = "@dismissed_hint";
 
@@ -94,20 +94,10 @@ export default function Home({ navigation }) {
         setLabel(foundRegion.label);
         setSelectedRegion(foundRegion);
         const weatherData = await getWeatherImages(foundRegion.airportCode);
-        let clouds = weatherData.data[0].text;
-        let allCloudFrames = JSON.parse(clouds).frame_lists[2].frames;
-        let icing = weatherData.data[1].text;
-        let allIcingFrames = JSON.parse(icing).frame_lists[2].frames;
-        let weatherLinks = [];
-        let icingLinks = [];
-        allCloudFrames.forEach(frame => {
-            weatherLinks.push(`https://plan.navcanada.ca/weather/images/${frame.images[0].id}.png`)
-        });
-        allIcingFrames.forEach(frame => {
-            icingLinks.push(`https://plan.navcanada.ca/weather/images/${frame.images[0].id}.png`)
-        });
-        setWeatherLinks(weatherLinks);
-        setIcingLinks(icingLinks);
+        const cloudLinks = _buildLinks(weatherData.data[0].text);
+        const iceTurbLinks = _buildLinks(weatherData.data[1].text);
+        setWeatherLinks(cloudLinks);
+        setIcingLinks(iceTurbLinks);
         setLoading(false);
       }
       fetchData();
@@ -153,21 +143,20 @@ export default function Home({ navigation }) {
         setLoading(true);
         track('Refresh Links Pressed');
         const weatherData = await getWeatherImages(selectedRegion.airportCode);
-        let clouds = weatherData.data[0].text;
-        let allCloudFrames = JSON.parse(clouds).frame_lists[2].frames;
-        let icing = weatherData.data[1].text;
-        let allIcingFrames = JSON.parse(icing).frame_lists[2].frames;
-        let weatherLinks = [];
-        let icingLinks = [];
-        allCloudFrames.forEach(frame => {
-            weatherLinks.push(`https://plan.navcanada.ca/weather/images/${frame.images[0].id}.png`)
-        });
-        allIcingFrames.forEach(frame => {
-            icingLinks.push(`https://plan.navcanada.ca/weather/images/${frame.images[0].id}.png`)
-        });
-        setWeatherLinks(weatherLinks);
-        setIcingLinks(icingLinks);
+        const cloudLinks = _buildLinks(weatherData.data[0].text);
+        const iceTurbLinks = _buildLinks(weatherData.data[1].text);
+        setWeatherLinks(cloudLinks);
+        setIcingLinks(iceTurbLinks);
         setLoading(false);
+    }
+
+    function _buildLinks(weatherData){
+        let allFrames = JSON.parse(weatherData).frame_lists[2].frames;
+        let links = [];
+        allFrames.forEach(frame => {
+            links.push(`https://plan.navcanada.ca/weather/images/${frame.images[0].id}.png`);
+        })
+        return links;
     }
 
     return (
@@ -260,5 +249,4 @@ const styles = StyleSheet.create({
     btnText: {
         fontWeight: 'bold'
     }
-    
 });
