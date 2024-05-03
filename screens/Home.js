@@ -189,16 +189,14 @@ export default function Home({ navigation }) {
                     <TouchableHighlight style={styles.btn} onPress={() => refreshLinks()} underlayColor={'#edae00'}>
                         <Text style={styles.btnText}>Refresh Links</Text>
                     </TouchableHighlight>
-                    <Text style={styles.copy}>Clouds & Weather Maps:</Text>
                     <ScrollView>
+                        <Text style={styles.copy}>Clouds & Weather Maps:</Text>
                         <ButtonList 
                             links={weatherLinks} 
                             navigation={navigation} 
                             region={label} 
                             hintDismissed={hintDismissed} />
-                    </ScrollView>
-                    <Text style={styles.copy}>Icing, Turbulence & Freezing Maps:</Text>
-                    <ScrollView>
+                        <Text style={styles.copy}>Icing, Turbulence & Freezing Maps:</Text>
                         <ButtonList 
                             links={icingLinks} 
                             navigation={navigation} 
