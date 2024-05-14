@@ -30,7 +30,7 @@ function App() {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen options={{headerShown: false}} name="GFA Viewer" component={Home} />
-          <Stack.Screen name="Map" component={GraphViewer} />
+          <Stack.Screen options={{ headerBackTitleVisible: false }} name="Map" component={GraphViewer} />
         </Stack.Navigator>
       </NavigationContainer>
     </AnalyticsProvider>
