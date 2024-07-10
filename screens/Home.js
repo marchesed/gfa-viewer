@@ -6,55 +6,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clock from '../components/Clock';
 import { useFocusEffect } from '@react-navigation/native';
 import { useAnalytics } from '@segment/analytics-react-native';
+import { regions } from "../utils/utils";
 
 const userRegionKey = "@user_region";
 const dismissHintKey = "@dismissed_hint";
-
-const regions = [
-    {
-        label: 'Pacific',
-        value: 'gfacn31',
-        airportCode: 'CYVR'
-    },
-    {
-        label: 'Prairies',
-        value: 'gfacn32',
-        airportCode: 'CYYC'
-    },
-    {
-        label: 'Ontario & Quebec',
-        value: 'gfacn33',
-        airportCode: 'CYTZ'
-    },
-    {
-        label: 'Atlantic',
-        value: 'gfacn34',
-        airportCode: 'CYYG'
-    },
-    {
-        label: 'Yukon & NWT',
-        value: 'gfacn35',
-        airportCode: 'CYXY'
-    },
-    {
-        label: 'Nunavut',
-        value: 'gfacn36',
-        airportCode: 'CYFB'
-    },
-    {
-        label: 'Arctic',
-        value: 'gfacn37',
-        airportCode: 'CYAB'
-    }
-];
-
-function format(value) {
-	if (value < 10) {
-		return "00" + value;
-	} else {
-		return "0" + value;
-	}
-};
 
 export default function Home({ navigation }) {
     const { track } = useAnalytics();
@@ -76,7 +31,7 @@ export default function Home({ navigation }) {
           const json = await response.json();
           return json;
         } catch (error) {
-          console.error(error);
+          console.error('getWeatherImages error', error);
         }
       };
 
@@ -142,12 +97,18 @@ export default function Home({ navigation }) {
     const refreshLinks = async() => {
         setLoading(true);
         track('Refresh Links Pressed');
-        const weatherData = await getWeatherImages(selectedRegion.airportCode);
-        const cloudLinks = _buildLinks(weatherData.data[0].text);
-        const iceTurbLinks = _buildLinks(weatherData.data[1].text);
-        setWeatherLinks(cloudLinks);
-        setIcingLinks(iceTurbLinks);
-        setLoading(false);
+        try {
+            const weatherData = await getWeatherImages(selectedRegion.airportCode);
+            console.log('weatherData.data[0].text',weatherData)
+            const cloudLinks = _buildLinks(weatherData.data[0].text);
+            const iceTurbLinks = _buildLinks(weatherData.data[1].text);
+            setWeatherLinks(cloudLinks);
+            setIcingLinks(iceTurbLinks);
+            setLoading(false);
+        }
+        catch(error) {
+            console.log('err',error)
+        }
     }
 
     function _buildLinks(weatherData){
@@ -177,6 +138,7 @@ export default function Home({ navigation }) {
                     labelStyle={{
                         fontWeight: 'bold'
                     }}
+                    maxHeight={400}
                 />
             </View>
             <Text style={styles.subheader}>Region: {label} ({value})</Text>

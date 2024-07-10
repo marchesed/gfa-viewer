@@ -8,14 +8,37 @@ const dismissHintKey = "@dismissed_hint";
 
 export default function GraphViewer({ route, navigation }) {
 
-    const { imageURL, region, hour, hintDismissed } = route.params;
+    const { imageURL, region, hour, hintDismissed, allUrls, idx } = route.params;
 
     const [dismissHintClicked, setDismissHintClicked] = useState(false);
     const [gestureDetected, setGestureDetected] = useState(false);
+    const [imgUrl, setImgUrl] = useState(imageURL);
+    const [imgIndex, setImgIndex] = useState(idx);
+    const [isLoading, setIsLoading] = useState(false);
+    const [newHour, setNewHour] = useState(hour);
     
     useEffect(() => {
         navigation.setOptions({ title: region + ' valid on ' + hour + ' UTC'});
     }, []);
+
+    useEffect(() => {
+        let tempNewHour;
+        switch(Number(newHour)) {
+            case 24:
+                tempNewHour = 24;
+                break;
+            case -6:
+                tempNewHour = 18;
+                break;
+            case -12:
+                tempNewHour = 12;
+                break;
+            default:
+                tempNewHour = newHour;
+                break;
+        }
+        navigation.setOptions({ title: region + ' valid on ' + tempNewHour + ' UTC'});
+    }, [newHour]);
 
     const scale = useSharedValue(1);
     const savedScale = useSharedValue(1);
@@ -114,6 +137,40 @@ export default function GraphViewer({ route, navigation }) {
         setGestureDetected(false);
     }
 
+    const nextGraph = () => {
+        if (imgIndex < 2) {
+            setIsLoading(true);
+            resetImage();
+            let newIdx = imgIndex + 1;
+            setImgIndex(newIdx);
+            setImgUrl(allUrls[newIdx]);
+            if (newIdx === idx) {
+                setNewHour(hour);
+            }
+            else {
+                let temp = newHour + 6;
+                setNewHour(temp);
+            }
+        }
+    }
+
+    const prevGraph = () => {
+        if (imgIndex > 0) {
+            setIsLoading(true);
+            resetImage();
+            let newIdx = imgIndex - 1;
+            setImgIndex(newIdx);
+            setImgUrl(allUrls[newIdx]);
+            if (newIdx === idx) {
+                setNewHour(hour);
+            }
+            else {
+                let temp = newHour - 6;
+                setNewHour(temp);
+            }
+        }
+    }
+
     return (
         <GestureHandlerRootView>
             <View>
@@ -122,15 +179,27 @@ export default function GraphViewer({ route, navigation }) {
                         <Text style={styles.resetButtonText}>Reset Graph</Text>
                     </TouchableHighlight>
                 }
+                {isLoading &&
+                    <View style={styles.loadingView}>
+                        <Text style={styles.loadingText}>Loading graph...</Text>
+                    </View>
+                }
+                <TouchableHighlight onPress={() => nextGraph()} style={styles.nextButton}>
+                    <Text style={styles.resetButtonText}>Next Graph</Text>
+                </TouchableHighlight>
+                <TouchableHighlight onPress={() => prevGraph()} style={styles.prevButton}>
+                    <Text style={styles.resetButtonText}>Prev Graph</Text>
+                </TouchableHighlight>
                 <Hint hintDismissed={hintDismissed || dismissHintClicked} dismissHint={dismissHint} />
                 <GestureDetector gesture={composed}>
                     <Animated.Image
-                        source={{ uri: imageURL }}
+                        source={{ uri: imgUrl }}
                         style={[{
                             width: '100%',
                             height: '100%'
                         }, animatedStyle]}
                         resizeMode="contain"
+                        onLoadEnd={() => setIsLoading(false)}
                     />
                 </GestureDetector>
             </View>
@@ -143,7 +212,7 @@ const styles = StyleSheet.create({
         padding: 10,
         position: 'absolute',
         right: 0,
-        bottom: 20,
+        top: 20,
         zIndex: 999,
         backgroundColor: 'grey',
         borderRadius: 4
@@ -151,5 +220,37 @@ const styles = StyleSheet.create({
     resetButtonText: {
         color: 'white',
         fontWeight: 'bold'
+    },
+    nextButton: {
+        margin: 20,
+        padding: 10,
+        position: 'absolute',
+        right: 0,
+        bottom: 20,
+        zIndex: 999,
+        backgroundColor: 'grey',
+        borderRadius: 4
+    },
+    prevButton: {
+        margin: 20,
+        padding: 10,
+        position: 'absolute',
+        left: 0,
+        bottom: 20,
+        zIndex: 999,
+        backgroundColor: 'grey',
+        borderRadius: 4
+    },
+    loadingView: {
+        position: 'absolute',
+        top: 20,
+        left: 20,
+        zIndex: 999,
+        backgroundColor: 'grey',
+        borderRadius: 4,
+        padding: 4
+    },
+    loadingText: {
+        color: 'white',
     }
 });

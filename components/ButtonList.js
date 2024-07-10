@@ -56,6 +56,8 @@ export default function ButtonList({ links, navigation, region, hintDismissed })
 
         const navigationProps = {
             imageURL: link,
+            allUrls: links,
+            idx: i,
             region: region,
             hour: hour,
             hintDismissed: hintDismissed

@@ -29,7 +29,7 @@ function App() {
     <AnalyticsProvider client={segmentClient}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen options={{headerShown: false}} name="GFA Viewer" component={Home} />
+          <Stack.Screen options={{ headerShown: false }} name="GFA Viewer" component={Home} />
           <Stack.Screen options={{ headerBackTitleVisible: false }} name="Map" component={GraphViewer} />
         </Stack.Navigator>
       </NavigationContainer>
